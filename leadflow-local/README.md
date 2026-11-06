@@ -35,6 +35,17 @@ The goal is to reduce manual prospect research and help sales teams and freelanc
 | AI / LLM | Groq API |
 | Server | Uvicorn |
 
+## 📸 Screenshots
+
+### Dashboard
+![LeadFlow Dashboard](screenshots/dashboard.png)
+
+### Enriched Lead Details
+![Lead Details](screenshots/lead-details.png)
+
+### AI-Generated Outreach
+![Outreach Draft](screenshots/outreach-draft.png)
+
 ##  Project Structure
 
 The local bundle includes the Python API source, a prebuilt frontend bundle, and locked Python dependencies.
