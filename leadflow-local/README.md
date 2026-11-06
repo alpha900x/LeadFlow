@@ -1,87 +1,174 @@
-# LeadFlow — local build
+# LeadFlow — AI-Powered Lead Enrichment Engine
 
-This bundle runs the LeadFlow dashboard and API on your computer without
-Replit's artifact router, API gateway, or deployment configuration. The
-dashboard is included as a prebuilt static bundle; editing the React UI still
-requires the original source workspace.
+LeadFlow is an AI-powered lead enrichment and prospecting platform that transforms a list of companies into actionable sales leads.
+Upload a CSV containing company information, and LeadFlow automatically researches their public websites, extracts useful business information and contact details, generates personalized outreach email drafts using an LLM, and assigns each prospect a potential lead score.
+The goal is to reduce manual prospect research and help sales teams and freelancers identify and prioritize promising business opportunities.
 
-## What is and is not included
+##  Key Features
 
-- The compiled dashboard and Python API source are included.
-- No Replit configuration, API key, or company database is included.
-- The first run creates `leadflow.db` in this folder.
-- Groq analysis and live public-website research still require internet access.
-  Without a Groq key, the dashboard opens but AI enrichment is unavailable.
+- **CSV Lead Import** — Upload CSV files containing company information to start the enrichment process.
+- **Automated Website Research** — Visits publicly accessible company websites and gathers relevant business information.
+- **Contact Discovery** — Extracts publicly available contact information and relevant business details.
+- **AI-Powered Enrichment** — Uses Groq-powered LLM analysis to organize and interpret collected company information.
+- **Personalized Outreach Drafts** — Generates contextual outreach email drafts based on the information discovered about each company.
+- **Lead Scoring** — Evaluates enriched company profiles and assigns potential lead scores to help prioritize prospects.
+- **Lead Management Dashboard** — View, review, and manage enriched leads through a centralized dashboard.
 
-## Requirements
+##  How It Works
+
+1. **Import:** Upload a CSV containing company details.
+2. **Research:** LeadFlow visits the companies' public websites using browser automation.
+3. **Extract:** Relevant business information and publicly available contact details are collected.
+4. **Enrich:** The collected information is analyzed and structured using an LLM.
+5. **Score:** Each company receives a potential lead score based on its available information.
+6. **Generate:** Personalized outreach email drafts are created for potential prospects.
+7. **Review:** Explore enriched leads, scores, company information, and email drafts in the dashboard.
+
+##  Technology Stack
+
+| Component | Technology |
+|---|---|
+| Backend API | Python, FastAPI |
+| Frontend | React (prebuilt static bundle) |
+| Database | SQLite |
+| Browser Automation | Playwright |
+| AI / LLM | Groq API |
+| Server | Uvicorn |
+
+##  Project Structure
+
+The local bundle includes the Python API source, a prebuilt frontend bundle, and locked Python dependencies.
+
+- `app/` — Backend application and API logic.
+- `requirements.txt` — Locked Python dependencies.
+- `leadflow.db` — Local SQLite database, automatically created on first run.
+- Frontend bundle — Compiled dashboard served by the backend.
+
+> **Note:** The original React source workspace is not included in this bundle. The dashboard can be used locally, but modifying its UI requires the original frontend source project.
+
+##  Requirements
 
 - Python 3.13
-- Internet access for installing packages, downloading Playwright Chromium,
-  Groq analysis, and live website research
+- Internet connection
+- Groq API key (required for AI enrichment and LLM-powered analysis)
 
-## Install
+Internet access is also required for installing dependencies, downloading Playwright Chromium, and researching publicly accessible company websites.
 
-Create and activate a virtual environment, then install the included locked
-dependencies:
+##  Installation & Setup
 
-### macOS / Linux
+### 1. Clone the Repository
 
-```sh
-python3.13 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m playwright install chromium
+```bash
+git clone https://github.com/alpha900x/LeadFlow/
+cd LeadFlow
 ```
 
-On Debian/Ubuntu Linux, if Chromium reports missing system libraries, install
-them with `python -m playwright install --with-deps chromium`.
+### 2. Create a Virtual Environment
 
-### Windows PowerShell
+**Windows (PowerShell):**
 
 ```powershell
 py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux:**
+
+```bash
+python3.13 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Install Dependencies
+
+```bash
 python -m pip install -r requirements.txt
+```
+
+### 4. Install Playwright Chromium
+
+```bash
 python -m playwright install chromium
 ```
 
-## Configure the Groq key
+On Debian/Ubuntu, if Chromium reports missing system libraries, run:
 
-The key is not in this bundle. Set `GROQ_API_KEY` in the environment of the
-terminal that starts the API. Do not put it in source files or commit it.
-
-macOS / Linux (the input is hidden):
-
-```sh
-read -s -p "Groq API key: " GROQ_API_KEY
-printf '\n'
-export GROQ_API_KEY
+```bash
+python -m playwright install --with-deps chromium
 ```
 
-Windows PowerShell:
+### 5. Configure the Groq API Key
+
+LeadFlow uses Groq for AI-powered analysis and outreach generation.
+
+The API key is not included in this repository. Set it as an environment variable in the terminal used to start the application.
+
+**Windows (PowerShell):**
 
 ```powershell
 $env:GROQ_API_KEY = Read-Host "Groq API key"
 ```
 
-`GROQ_MODEL` defaults to `openai/gpt-oss-120b`. The safe Groq request/token
-budgets can be overridden with `GROQ_SAFE_RPM`, `GROQ_SAFE_RPD`,
-`GROQ_SAFE_TPM`, and `GROQ_SAFE_TPD`.
+**macOS / Linux:**
 
-## Run
+```bash
+read -s -p "Groq API key: " GROQ_API_KEY
+printf '\n'
+export GROQ_API_KEY
+```
 
-With the virtual environment active and the key set, run:
+The default model is:
 
-```sh
+```text
+openai/gpt-oss-120b
+```
+
+You can override the model using the `GROQ_MODEL` environment variable.
+
+Optional request and token budget configurations:
+
+```text
+GROQ_SAFE_RPM
+GROQ_SAFE_RPD
+GROQ_SAFE_TPM
+GROQ_SAFE_TPD
+```
+
+These variables allow you to configure safe request and token usage limits.
+
+### 6. Run the Application
+
+With the virtual environment activated and your API key configured, run:
+
+```bash
 python -m uvicorn app.local_app:app --host 127.0.0.1 --port 8000
 ```
 
-Open <http://127.0.0.1:8000>. Stop the server with Ctrl+C.
+Open the following URL in your browser:
 
-## Existing company data
+**http://127.0.0.1:8000**
 
-The Replit workspace keeps its SQLite database at
-`artifacts/leadflow/backend/leadflow.db`. It is deliberately not in this bundle.
-To bring those companies and results over, copy that file into this folder as
-`leadflow.db` before the first local run. Keep a backup and do not upload it to
-public source control.
+The dashboard and API will run locally on your machine.
+
+Press `Ctrl + C` in the terminal to stop the server.
+
+## ⚠️ Configuration & Limitations
+
+- The first application run automatically creates a local SQLite database (`leadflow.db`).
+- No preconfigured company database or sample leads are included.
+- No Groq API key is bundled with the project.
+- Without a Groq API key, the dashboard can still open, but AI-powered enrichment and analysis will be unavailable.
+- Website research requires an active internet connection.
+- The frontend is distributed as a compiled static bundle; its original React source is maintained separately.
+
+## 🔒 Security & Responsible Usage
+
+- Keep your Groq API key private. Never commit API keys or credentials to GitHub.
+- Only research publicly accessible company websites.
+- Respect website terms of service, robots.txt directives, and applicable rate limits.
+- Treat discovered contact information as unverified until reviewed.
+- Review AI-generated outreach drafts before sending them.
+
+## 📄 License
+
+Add your preferred license before distributing or reusing this project.
